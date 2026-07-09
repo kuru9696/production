@@ -1,0 +1,349 @@
+<!DOCTYPE HTML>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>高齢者トラブル解決アプリケーション</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+  <style>
+    :root{
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --muted: #6b7280;
+      --accent: #2563eb;
+      --accent-2: #10b981;
+      --danger: #ef4444;
+      --radius: 12px;
+    }
+    *{box-sizing: border-box}
+    html,body{height:100%;margin:0;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; background:var(--bg); color:#0f172a}
+    header.app-header{display:flex;align-items:center;gap:12px;padding:12px 16px;background:linear-gradient(90deg,#ffffff 0%, #eef2ff 100%);box-shadow:0 2px 8px rgba(15,23,42,0.04);position:sticky;top:0;z-index:1000}
+    .brand{display:flex;align-items:center;gap:10px}
+    .logo{width:42px;height:42px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#7c3aed);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:18px}
+    .title{font-weight:700;font-size:16px}
+    .subtitle{font-size:12px;color:var(--muted)}
+    #map{height:56vh;width:100%;border-bottom:1px solid rgba(15,23,42,0.04)}
+    .controls{max-width:980px;margin:14px auto;padding:0 14px}
+    .form-card{background:var(--card);border-radius:var(--radius);padding:14px;box-shadow:0 8px 20px rgba(2,6,23,0.06);display:grid;grid-template-columns:repeat(2,1fr);gap:12px;align-items:end}
+    .form-row{display:flex;flex-direction:column;gap:6px}
+    label{font-size:12px;color:var(--muted)}
+    select,input{height:40px;padding:8px;border-radius:8px;border:1px solid #e6e9ef;font-size:15px}
+    input::placeholder{color:#9aa4b2}
+    .full{grid-column:1/-1}
+    .submit-btn{background:var(--accent-2);border:none;color:white;padding:10px;border-radius:10px;font-weight:600;cursor:pointer;height:44px}
+    .submit-btn:active{transform:translateY(1px)}
+    .legend{display:flex;gap:8px;align-items:center;margin-top:10px}
+    .legend .item{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
+    .dot{width:12px;height:12px;border-radius:50%}
+    .dot.red{background:#ef4444}
+    .dot.green{background:#10b981}
+    .leaflet-popup-content-wrapper{border-radius:10px}
+    .popup-content{min-width:220px}
+    .popup-row{display:flex;gap:8px;align-items:center;margin-bottom:6px}
+    .popup-title{font-weight:700;font-size:15px;margin:0}
+    .popup-sub{font-size:13px;color:var(--muted);margin:0}
+    .popup-btn{display:block;width:100%;padding:8px;border-radius:8px;border:none;font-weight:600;cursor:pointer;margin-top:8px}
+    .btn-approve{background:#f59e0b;color:white}
+    .btn-complete{background:#10b981;color:white}
+    .btn-danger{background:#ef4444;color:white}
+    .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:22px;background:rgba(15,23,42,0.9);color:white;padding:10px 14px;border-radius:8px;z-index:2000;display:none}
+    .user-toggle{position:fixed;top:12px;right:12px;z-index:1200;background:var(--card);border-radius:10px;box-shadow:0 6px 18px rgba(2,6,23,0.08);padding:8px 10px;display:flex;gap:8px;align-items:center;border:1px solid #e6e9ef;font-weight:600;cursor:pointer;user-select:none}
+    .user-toggle.active{background:linear-gradient(90deg,var(--accent),#7c3aed);color:white;border-color:transparent}
+    .user-toggle small{display:block;font-size:11px;color:var(--muted)}
+    .user-toggle.active small{color:rgba(255,255,255,0.9)}
+    @media(max-width:720px){
+      .form-card{grid-template-columns:1fr}
+      .title{font-size:15px}
+      .logo{width:36px;height:36px}
+      #map{height:52vh}
+      .user-toggle{top:8px;right:8px;padding:7px 9px}
+    }
+  </style>
+
+</head>
+<body>
+
+  <div id="map" aria-label="地図"></div>
+
+  <button id="userToggle" class="user-toggle" aria-pressed="false" title="自分の現在地を表示/非表示">
+    <span id="userToggleLabel">自分の位置を表示</span>
+    <small id="userToggleSub">オフ</small>
+  </button>
+
+  <div class="controls">
+    <div class="form-card" role="region" aria-label="募集フォーム">
+      <div class="form-row">
+        <label for="old">年齢</label>
+        <select id="old">
+          <option value="">選択してください</option>
+          <option value="60代">60代</option>
+          <option value="70代">70代</option>
+          <option value="80代">80代</option>
+          <option value="90代">90代</option>
+          <option value="100代以降">100代以降</option>
+        </select>
+      </div>
+
+      <div class="form-row">
+        <label for="gender">性別</label>
+        <select id="gender">
+          <option value="">選択してください</option>
+          <option value="男性">男性</option>
+          <option value="女性">女性</option>
+          <option value="その他">その他</option>
+        </select>
+      </div>
+
+      <div class="form-row full">
+        <label for="title">タイトル</label>
+        <select id="title">
+          <option value="">選択してください</option>
+          <option value="荷物運び">荷物運び</option>
+          <option value="道案内">道案内</option>
+          <option value="家の手伝い">家の手伝い</option>
+          <option value="ごみ捨て">ごみ捨て</option>
+          <option value="その他">その他</option>
+        </select>
+      </div>
+
+      <div class="form-row full">
+        <label for="naiyo">募集内容（任意）</label>
+        <input id="naiyo" type="text" placeholder="例：スーパーまで荷物を運んでほしい">
+      </div>
+
+      <div class="form-row full">
+        <button class="submit-btn" onclick="buttonClick()">募集する</button>
+      </div>
+
+    </div>
+
+    <div class="legend" aria-hidden="true">
+      <div class="item"><span class="dot red"></span>未承諾</div>
+      <div class="item"><span class="dot green"></span>承諾済み</div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <script>
+    let map;
+    const markersLayer = L.layerGroup();
+    const userLayer = L.layerGroup();
+
+    const redIcon = new L.Icon({
+      iconUrl: 'https://maps.google.com/mapfiles/ms/icons/red-dot.png',
+      iconSize: [32,32], iconAnchor: [16,32], popupAnchor: [0,-28]
+    });
+    const greenIcon = new L.Icon({
+      iconUrl: 'https://maps.google.com/mapfiles/ms/icons/green-dot.png',
+      iconSize: [32,32], iconAnchor: [16,32], popupAnchor: [0,-28]
+    });
+
+    let userMarker = null;
+    let userWatchId = null;
+    let userShown = false;
+
+    function toast(msg, timeout=2200){
+      const el = document.getElementById('toast');
+      el.textContent = msg;
+      el.style.display = 'block';
+      clearTimeout(el._t);
+      el._t = setTimeout(()=> el.style.display = 'none', timeout);
+    }
+
+    function initMap(){
+      map = L.map('map', {zoomControl:true, attributionControl:false}).setView([35.7,139.49], 15);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom:19}).addTo(map);
+      markersLayer.addTo(map);
+      userLayer.addTo(map);
+      loadMarkers();
+      let t;
+      map.on('moveend', ()=>{ clearTimeout(t); t=setTimeout(loadMarkers,400); });
+      const userToggle = document.getElementById('userToggle');
+      userToggle.addEventListener('click', toggleUserLocation);
+    }
+
+    function clearMarkers(){ markersLayer.clearLayers(); }
+
+    function loadMarkers(){
+      fetch('/list').then(r=>r.json()).then(data=>{
+        clearMarkers();
+        data.forEach((item, index)=>{
+          const icon = item.approved ? greenIcon : redIcon;
+          const marker = L.marker([item.lat, item.lng], {icon});
+          const naiyoEsc = item.naiyo ? escapeHtml(item.naiyo) : '';
+          const pop = document.createElement('div');
+          pop.className = 'popup-content';
+          const t = document.createElement('p'); t.className='popup-title'; t.textContent = item.title || '（タイトルなし）';
+          const s = document.createElement('p'); s.className='popup-sub'; s.textContent = `${item.age || '年齢不明'} ・ ${item.gender || '性別不明'}`;
+          const d = document.createElement('p'); d.style.marginTop='8px'; d.style.marginBottom='0'; d.textContent = naiyoEsc || '(詳細なし)';
+          pop.appendChild(t);
+          pop.appendChild(s);
+          pop.appendChild(d);
+          const btnWrap = document.createElement('div'); btnWrap.style.marginTop='8px';
+          if(!item.approved){
+            const btn = document.createElement('button'); btn.className='popup-btn btn-approve'; btn.textContent='承諾';
+            btn.onclick = ()=>{ approve(index); };
+            btnWrap.appendChild(btn);
+          } else {
+            const btn = document.createElement('button'); btn.className='popup-btn btn-complete'; btn.textContent='完了';
+            btn.onclick = ()=>{ if(confirm('この募集を完了して削除しますか？')) complete(index); };
+            btnWrap.appendChild(btn);
+            const del = document.createElement('button'); del.className='popup-btn btn-danger'; del.textContent='通報/削除'; del.style.marginTop='6px';
+            del.onclick = ()=>{ if(confirm('本当に削除しますか？')) complete(index); };
+          }
+          pop.appendChild(btnWrap);
+          marker.bindPopup(pop);
+          marker.addTo(markersLayer);
+        });
+      }).catch(err=>{
+        console.error('loadMarkers error', err);
+      });
+    }
+
+    function escapeHtml(s){ if(!s) return ''; return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+    // ---------- 修正ポイント：buttonClick() ----------
+    function buttonClick(){
+      const old = document.getElementById('old').value;
+      const gender = document.getElementById('gender').value;
+      const title = document.getElementById('title').value;
+      const naiyo = document.getElementById('naiyo').value;
+
+      if(!title){ toast('タイトルを選んでください'); return; }
+
+      // もし「自分の位置表示がON」かつ userMarker が存在するなら、それを使う（余分な getCurrentPosition を呼ばない）
+      if(userShown && userMarker){
+        const latlng = userMarker.getLatLng();
+        const payload = { lat: latlng.lat, lng: latlng.lng, age: old, gender: gender, title: title, naiyo: naiyo };
+        fetch('/add', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)})
+          .then(r=>r.json()).then(()=>{ toast('募集を投稿しました'); loadMarkers(); })
+          .catch(()=>toast('投稿に失敗しました'));
+        return;
+      }
+
+      // それ以外は通常通り getCurrentPosition で位置を取得する
+      if(navigator.geolocation){
+        navigator.geolocation.getCurrentPosition(pos=>{
+          const payload = { lat: pos.coords.latitude, lng: pos.coords.longitude, age: old, gender: gender, title: title, naiyo: naiyo };
+          fetch('/add', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)})
+            .then(r=>r.json()).then(()=>{ toast('募集を投稿しました'); loadMarkers(); })
+            .catch(()=>toast('投稿に失敗しました'));
+        }, ()=>{
+          toast('位置情報を取得できませんでした（ブラウザの設定を確認）');
+        }, {timeout:5000});
+      } else {
+        toast('このブラウザは位置情報に対応していません');
+      }
+    }
+    // ---------- 修正ここまで ----------
+
+    function approve(index){
+      fetch('/approve', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({index})})
+        .then(r=>r.json()).then(()=>{ toast('承諾しました'); loadMarkers(); })
+        .catch(()=>toast('承諾に失敗しました'));
+    }
+
+    function complete(index){
+      fetch('/delete', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({index})})
+        .then(r=>r.json()).then(()=>{ toast('募集を完了しました'); loadMarkers(); })
+        .catch(()=>toast('削除に失敗しました'));
+    }
+
+    function updateToggleUI(shown){
+      const btn = document.getElementById('userToggle');
+      const lbl = document.getElementById('userToggleLabel');
+      const sub = document.getElementById('userToggleSub');
+      if(shown){
+        btn.classList.add('active');
+        btn.setAttribute('aria-pressed','true');
+        lbl.textContent = '自分の位置を非表示';
+        sub.textContent = 'オン';
+      } else {
+        btn.classList.remove('active');
+        btn.setAttribute('aria-pressed','false');
+        lbl.textContent = '自分の位置を表示';
+        sub.textContent = 'オフ';
+      }
+    }
+
+    function toggleUserLocation(){
+      if(!userShown){
+        showUserLocation();
+      } else {
+        hideUserLocation();
+      }
+    }
+
+    function showUserLocation(){
+      if(!navigator.geolocation){
+        toast('このブラウザは位置情報に対応していません');
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(pos => {
+        const lat = pos.coords.latitude;
+        const lng = pos.coords.longitude;
+
+        if(!userMarker){
+          userMarker = L.circleMarker([lat, lng], {
+            radius: 8,
+            color: '#ffffff',
+            weight: 2,
+            fillColor: getComputedStyle(document.documentElement).getPropertyValue('--accent') || '#2563eb',
+            fillOpacity: 0.95
+          }).addTo(userLayer);
+
+          userMarker.bindPopup('あなたの現在地');
+        } else {
+          userMarker.setLatLng([lat,lng]);
+        }
+
+        map.setView([lat, lng], Math.max(map.getZoom(), 15));
+
+        if(userWatchId === null){
+          userWatchId = navigator.geolocation.watchPosition(p => {
+            const la = p.coords.latitude;
+            const ln = p.coords.longitude;
+            if(userMarker) userMarker.setLatLng([la, ln]);
+          }, err => {
+            console.warn('watchPosition error', err);
+          }, {enableHighAccuracy:true, maximumAge:5000, timeout:7000});
+        }
+
+        userShown = true;
+        updateToggleUI(true);
+        toast('自分の位置を表示しました');
+      }, err => {
+        console.warn('getCurrentPosition error', err);
+        toast('位置情報を取得できませんでした（許可や端末設定を確認してください）');
+      }, {enableHighAccuracy:true, timeout:7000});
+    }
+
+    function hideUserLocation(){
+      if(userWatchId !== null){
+        navigator.geolocation.clearWatch(userWatchId);
+        userWatchId = null;
+      }
+      userLayer.clearLayers();
+      userMarker = null;
+      userShown = false;
+      updateToggleUI(false);
+      toast('自分の位置を非表示にしました');
+    }
+
+    // 初期表示をONにする場合は次の行を有効化（既にONが要る場合）
+    // window.addEventListener('load', () => { initMap(); showUserLocation(); });
+
+    // 通常：初期はOFFで読み込み
+    window.addEventListener('load', initMap);
+  </script>
+</body>
+</html>
+
+
