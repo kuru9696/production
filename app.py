@@ -2,8 +2,8 @@ from flask import Flask, request, jsonify, send_from_directory, url_for,render_t
 from flask_cors import CORS
 import json
 import os
-from .env import load_dotenv
-from flask_sqlalchemy import SQLAlchemy
+from dotenv import load_dotenv
+from flask_sqlalchemy import SQLA
 from flask_login import (
     LoginManager, UserMixin, login_user,
     login_required, logout_user, current_user
