@@ -4,5 +4,10 @@
 
 {% block content %}
   <p>募集を探す</p>
-  
+  <div id="map" aria-label="地図"></div>
+
+  <button id="userToggle" class="user-toggle" aria-pressed="false" title="自分の現在地を表示/非表示">
+    <span id="userToggleLabel">自分の位置を表示</span>
+    <small id="userToggleSub">オフ</small>
+  </button>
 {% endblock %}
