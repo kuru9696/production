@@ -50,3 +50,30 @@
       #map{height:52vh}
       .user-toggle{top:8px;right:8px;padding:7px 9px}
     }
+body {
+      font-family: -apple-system, "Hiragino Sans", sans-serif;
+      max-width: 400px;
+      margin: 40px auto;
+      padding: 0 16px;
+      color: #222;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 6px 0 14px;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px; /* スマホでズームされないように16px以上に */
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+    .flash { background: #fef3c7; padding: 8px 12px; border-radius: 6px; margin-bottom: 12px; }
+    a { color: #2563eb; }
