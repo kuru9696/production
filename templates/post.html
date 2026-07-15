@@ -66,3 +66,7 @@
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 {% endblock %}
+
+{% block script %}
+  <script src="{{url_for('static',filename='js/post.js')}}"></script>
+{ % endblock % }
