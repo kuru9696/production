@@ -3,7 +3,7 @@ from flask_cors import CORS
 import json
 import os
 from dotenv import load_dotenv
-from flask_sqlalchemy import SQLA
+from flask_sqlalchemy import SQLAlchemy
 from flask_login import (
     LoginManager, UserMixin, login_user,
     login_required, logout_user, current_user
@@ -21,6 +21,8 @@ DATA_FILE = "data.json"
 if not os.path.exists(DATA_FILE):
     with open(DATA_FILE, "w", encoding="utf-8") as f:
         json.dump([], f, ensure_ascii=False, indent=2)
+
+load_dotenv()
 
 app.config["SECRET_KEY"] = os.environ["SECRET_KEY"]
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///users.db"

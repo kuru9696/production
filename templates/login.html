@@ -1,7 +1,7 @@
 {% extends "base.html" %}
-{% block title %}新規登録{% endblock %}
+{% block title %}ログイン{% endblock %}
 {% block content %}
-  <h2>新規登録</h2>
+  <h2>ログイン</h2>
   <form method="POST">
     <label>ユーザー名</label>
     <input type="text" name="username" required>
@@ -9,7 +9,7 @@
     <label>パスワード</label>
     <input type="password" name="password" required>
 
-    <button type="submit">登録する</button>
+    <button class="button2" type="submit">ログイン</button>
   </form>
-  <p>すでにアカウントをお持ちの方は <a href="{{ url_for('login') }}">ログイン</a></p>
+  <p>アカウントをお持ちでない方は <a href="{{ url_for('register') }}">新規登録</a></p>
 {% endblock %}
