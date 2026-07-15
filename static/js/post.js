@@ -52,19 +52,6 @@
           pop.appendChild(t);
           pop.appendChild(s);
           pop.appendChild(d);
-          const btnWrap = document.createElement('div'); btnWrap.style.marginTop='8px';
-          if(!item.approved){
-            const btn = document.createElement('button'); btn.className='popup-btn btn-approve'; btn.textContent='承諾';
-            btn.onclick = ()=>{ approve(index); };
-            btnWrap.appendChild(btn);
-          } else {
-            const btn = document.createElement('button'); btn.className='popup-btn btn-complete'; btn.textContent='完了';
-            btn.onclick = ()=>{ if(confirm('この募集を完了して削除しますか？')) complete(index); };
-            btnWrap.appendChild(btn);
-            const del = document.createElement('button'); del.className='popup-btn btn-danger'; del.textContent='通報/削除'; del.style.marginTop='6px';
-            del.onclick = ()=>{ if(confirm('本当に削除しますか？')) complete(index); };
-          }
-          pop.appendChild(btnWrap);
           marker.bindPopup(pop);
           marker.addTo(markersLayer);
         });
@@ -109,12 +96,6 @@
       }
     }
     // ---------- 修正ここまで ----------
-
-    function approve(index){
-      fetch('/approve', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({index})})
-        .then(r=>r.json()).then(()=>{ toast('承諾しました'); loadMarkers(); })
-        .catch(()=>toast('承諾に失敗しました'));
-    }
 
     function complete(index){
       fetch('/delete', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({index})})
