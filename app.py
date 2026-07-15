@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, send_from_directory, url_for,render_template, redirect,Flash
+from flask import Flask, request, jsonify, send_from_directory, url_for,render_template, redirect,flash
 from flask_cors import CORS
 import json
 import os
