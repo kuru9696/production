@@ -1,18 +1,3 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <script src="{{ url_for('static', filename='js/support.js') }}"></script>
-      
-    <title>Document</title>
-</head>
-<body>
-  <div id="map" aria-label="地図"></div>
+{% extends "base.html" %}
 
-  <button id="userToggle" class="user-toggle" aria-pressed="false" title="自分の現在地を表示/非表示">
-    <span id="userToggleLabel">自分の位置を表示</span>
-    <small id="userToggleSub">オフ</small>
-  </button>
-</body>
-</html>
+{% block title %}手助けを募集する{% endblock %}
