@@ -1,12 +1,10 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>高齢者学生選択画面</title>
-</head>
-<body>
-    <button id="elderly">高齢者はこちら</button>
-    <button id="young">学生はこちら</button>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block content}ユーザー選択画面{% endblock %}
+
+{% block content}
+  <nav>
+    <a href="{{ url_for('post')}}">高齢者</a>
+    <a href="{{ url_for('support')}}">学生</a>
+  </nav>
+{% endblock %}
