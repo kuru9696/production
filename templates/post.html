@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <script src="{{ url_for('static', filename='js/map.js') }}"></script>
       <script src="{{ url_for('static', filename='js/post.js') }}"></script>
       <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <title>高齢者側ページ</title>
@@ -68,5 +67,6 @@
       <div class="item"><span class="dot green"></span>承諾済み</div>
     </div>
   </div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
 </body>
 </html>
