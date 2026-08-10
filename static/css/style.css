@@ -69,7 +69,7 @@ body {
     .button2 {
       width: 100%;
       padding: 10px;
-      background: #2563eb;
+      background: var(--accent-2⁾);
       color: white;
       border: none;
       border-radius: 6px;
@@ -77,3 +77,13 @@ body {
     }
     .flash { background: #fef3c7; padding: 8px 12px; border-radius: 6px; margin-bottom: 12px; }
     a { color: #2563eb; }
+  
+.choose {
+    margin: 1rem auto;
+    padding: 1rem;
+    display: block;
+    /* width: 6rem; */
+    text-align: center;
+}
+
+@media (max-width: 600px) { nav h4 { font-size: 23px; padding: 0 20px; } .choose { width: 80%; max-width: 280px; height: 65px; font-size: 18px; } }
