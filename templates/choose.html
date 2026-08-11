@@ -1,11 +1,24 @@
 {% extends "base.html" %}
 
-{% block title %}ユーザー選択画面{% endblock %}
+{% block title %}
+ユーザー選択画面
+{% endblock %}
 
 {% block content %}
-  <nav>
+
+<nav class="choose-nav">
+
     <h4>世代間生活支援アプリケーション</h4>
-    <a href="{{ url_for('post') }}" class="choose button2" >高齢者</a>
-    <a href="{{ url_for('support') }}" class="choose button2">学生</a>
-  </nav>
+
+    <a href="{{ url_for('post') }}" class="choose">
+        高齢者
+    </a>
+
+    <a href="{{ url_for('support') }}" class="choose">
+        学生
+    </a>
+
+</nav>
+
 {% endblock %}
+```
