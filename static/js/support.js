@@ -24,7 +24,7 @@
     }
 
     function initMap(){
-      map = L.map('map', {zoomControl:true, attributionControl:false}).setView([35.7,139.49], 15);
+      map = L.map('map', {zoomControl:true, attributionControl:false}).setView([34.6881300777831, 135.82792121975893], 16);
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom:19}).addTo(map);
       markersLayer.addTo(map);
       userLayer.addTo(map);
