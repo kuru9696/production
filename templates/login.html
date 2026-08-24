@@ -11,10 +11,8 @@
     <input type="text" name="username" class="username" required>
 
     <label>パスワード</label>
-    <input type="password" name="password" class="password" required>
-    <nav>
-      <button class="button2" type="submit">ログイン</button>
-    </nav>
+    <p><input type="password" name="password" class="password" required></p>
+    <p><button class="button2" type="submit">ログイン</button></p>
   </form>
   <p>アカウントをお持ちでない方は <a href="{{ url_for('register') }}">新規登録</a></p>
 {% endblock %}

@@ -191,23 +191,21 @@ nav h4 {
 .button2 {
   width: 280px;
   min-height: 65px;
-
   padding: 10px;
+  margin: 10px auto;
+  display: flex;     
+  justify-content: center;
+  align-items: center;
 
   background: var(--accent-2);
   color: white;
-
   border: none;
   border-radius: var(--radius);
-
   font-size: 18px;
   font-weight: 600;
-
   text-decoration: none;
   text-align: center;
-
   cursor: pointer;
-
   transition: 0.2s;
 }
 

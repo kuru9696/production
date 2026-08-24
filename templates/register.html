@@ -7,11 +7,9 @@
     <input type="text" name="username" class="username" required>
 
     <label>パスワード</label>
-    <input type="password" name="password" class="password" required>
-
-    <nav>
-      <button class="button2" type="submit">登録する</button>
-    </nav>
+    <p><input type="password" name="password" class="password" required></p>
+    <p><button class="button2" type="submit">登録する</button></p>
+    
     </form>
   <p>すでにアカウントをお持ちの方は <a href="{{ url_for('login') }}">ログイン</a></p>
 {% endblock %}
